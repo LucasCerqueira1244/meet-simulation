@@ -1,58 +1,30 @@
-const User = require('../models/User');
+const UserModel = require('../models/User');
 
 class UserRepository {
-    
-    async createUser(userData) {
-        try {
-          const salt = await bcrypt.genSalt(10);
-          const hashedPassword = await bcrypt.hash(userData.password, salt);
-          
-          const user = new User({
-            ...userData,
-            password: hashedPassword,
-          });
-          await user.save();
-          return user;
-        } catch (error) {
-          throw new Error('Erro ao criar usuário: ' + error.message);
-        }
-      }
+    async create(data) {
+        const user = new UserModel(data);
+        return await user.save();
+    }
 
-    async findUserByEmail(email) {
-        try {
-            const user = await User.findOne({ email });
-            return user;
-        } catch (error) {
-            throw new Error('Erro ao encontrar usuário: ' + error.message);
-        }
-    };
+    async findById(id) {
+        return await UserModel.findById(id);
+    }
 
-    async findUserById(id) {
-        try {
-        const user = await User.findById(id);
-        return user;
-        } catch (error) {
-        throw new Error('Erro ao encontrar usuário: ' + error.message);
-        }
-    };
+    async findByUsername(username) {
+        return await UserModel.findOne({ username });
+    }
 
-    async updateUser(id, updateData) {
-        try {
-        const user = await User.findByIdAndUpdate(id, updateData, { new: true });
-        return user;
-        } catch (error) {
-        throw new Error('Erro ao atualizar usuário: ' + error.message);
-        }
-    };
+    async update(id, data) {
+        return await UserModel.findByIdAndUpdate(id, data, { new: true });
+    }
 
-    async deleteUser(id) {
-        try {
-        await User.findByIdAndDelete(id);
-        return { message: 'Usuário excluído com sucesso' };
-        } catch (error) {
-        throw new Error('Erro ao excluir usuário: ' + error.message);
-        }
-    };
-};
+    async delete(id) {
+        return await UserModel.findByIdAndDelete(id);
+    }
+
+    async findAll() {
+        return await UserModel.find();
+    }
+}
 
 module.exports = new UserRepository();

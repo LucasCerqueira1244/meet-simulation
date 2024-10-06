@@ -1,19 +1,18 @@
 const express = require('express');
-const connectDB = require('../src/config/mongo');
 const dotenv = require('dotenv');
-
+const connectDB = require('./config/mongo');
+const userRoutes = require('./routes/userRoutes');
 
 dotenv.config();
-connectDB();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
 app.use(express.json());
+connectDB();
 
-app.get('/', (req, res) => {
-    res.send('Servidor rodando e conectado ao MongoDB!')
-})
+app.use('/api/users', userRoutes);
 
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Servidor rodando no endereço http://127.0.0.1:${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
