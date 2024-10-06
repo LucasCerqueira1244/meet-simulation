@@ -16,6 +16,22 @@ const userService = {
         }
         throw new Error('Credenciais inválidas');
     },
+
+    async findByEmail(email) {
+        return await UserRepository.findByEmail(email);
+    },
+
+    async findAll() {
+        return await UserRepository.findAll();
+    },
+
+    async update(id, data) {
+        return await UserRepository.update(id, data);
+    },
+
+    async delete(id) {
+        return await UserRepository.delete(id);
+    }
 };
 
 module.exports = userService;
