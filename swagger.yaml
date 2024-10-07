@@ -1,0 +1,346 @@
+openapi: 3.0.0
+info:
+  title: API de Gerenciamento de Salas
+  version: 1.0.0
+  description: Documentação da API para gerenciamento de salas de reunião
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Users
+    description: Operações relacionadas aos usuários
+  - name: Rooms
+    description: Operações relacionadas às salas de reunião
+
+paths:
+  /api/users/register:
+    post:
+      tags:
+        - Users
+      summary: Registra um novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+      responses:
+        '201':
+          description: Usuário registrado com sucesso
+        '400':
+          description: Erro ao registrar usuário
+
+  /api/users/login:
+    post:
+      tags:
+        - Users
+      summary: Faz login de um usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Login bem-sucedido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      email:
+                        type: string
+        '401':
+          description: Credenciais inválidas
+
+  /api/users/{email}:
+    get:
+      tags:
+        - Users
+      summary: Busca um usuário pelo e-mail
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: E-mail do usuário
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Usuário encontrado
+        '404':
+          description: Usuário não encontrado
+
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: Retorna todos os usuários
+      responses:
+        '200':
+          description: Lista de usuários
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    email:
+                      type: string
+
+    put:
+      tags:
+        - Users
+      summary: Atualiza um usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do usuário a ser atualizado
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Usuário atualizado com sucesso
+        '404':
+          description: Usuário não encontrado
+        '400':
+          description: Erro ao atualizar usuário
+
+    delete:
+      tags:
+        - Users
+      summary: Deleta um usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do usuário a ser deletado
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuário deletado com sucesso
+        '404':
+          description: Usuário não encontrado
+
+  /api/rooms:
+    post:
+      tags:
+        - Rooms
+      summary: Cria uma nova sala de reunião
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                descriptions:
+                  type: string
+                capacity:
+                  type: integer
+              required:
+                - name
+                - capacity
+      responses:
+        '201':
+          description: Sala de reunião criada com sucesso
+        '400':
+          description: Erro ao criar sala
+
+    get:
+      tags:
+        - Rooms
+      summary: Retorna todas as salas de reunião
+      responses:
+        '200':
+          description: Lista de salas de reunião
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    descriptions:
+                      type: string
+                    capacity:
+                      type: integer
+
+  /api/rooms/{id}:
+    get:
+      tags:
+        - Rooms
+      summary: Busca uma sala de reunião pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID da sala de reunião
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sala de reunião encontrada
+        '404':
+          description: Sala de reunião não encontrada
+
+    put:
+      tags:
+        - Rooms
+      summary: Atualiza uma sala de reunião
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID da sala a ser atualizada
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                descriptions:
+                  type: string
+                capacity:
+                  type: integer
+                isActivate:
+                  type: boolean
+      responses:
+        '200':
+          description: Sala de reunião atualizada com sucesso
+        '404':
+          description: Sala de reunião não encontrada
+        '400':
+          description: Erro ao atualizar sala
+
+    delete:
+      tags:
+        - Rooms
+      summary: Deleta uma sala de reunião
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID da sala a ser deletada
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sala de reunião deletada com sucesso
+        '404':
+          description: Sala de reunião não encontrada
+
+  /api/rooms/join:
+    post:
+      tags:
+        - Rooms
+      summary: Adiciona um usuário a uma sala de reunião
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roomId:
+                  type: string
+              required:
+                - roomId
+      responses:
+        '200':
+          description: Usuário adicionado à sala com sucesso
+        '404':
+          description: Sala de reunião não encontrada
+        '500':
+          description: Erro ao entrar na sala de reunião
+
+  /api/rooms/send-message:
+    post:
+      tags:
+        - Rooms
+      summary: Envia uma mensagem em uma sala de reunião
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roomId:
+                  type: string
+                content:
+                  type: string
+              required:
+                - roomId
+                - content
+      responses:
+        '201':
+          description: Mensagem enviada com sucesso
+        '404':
+          description: Sala de reunião não encontrada
+        '403':
+          description: Permissão negada para enviar mensagens
+        '500':
+          description: Erro ao enviar mensagem
